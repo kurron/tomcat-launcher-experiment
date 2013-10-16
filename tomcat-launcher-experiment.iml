@@ -24,6 +24,18 @@
     <orderEntry type="library" exported="" name="cal10n-api-0.7.4" level="project" />
     <orderEntry type="library" scope="TEST" name="spock-core-0.7-groovy-2.0" level="project" />
     <orderEntry type="library" exported="" name="groovy-all-2.1.7" level="project" />
+    <orderEntry type="library" exported="" name="tomcat-embed-core-7.0.42" level="project" />
+    <orderEntry type="library" exported="" name="tomcat-servlet-api-7.0.42" level="project" />
+    <orderEntry type="library" exported="" name="tomcat-embed-logging-juli-7.0.42" level="project" />
+    <orderEntry type="library" exported="" name="tomcat-el-api-7.0.42" level="project" />
+    <orderEntry type="library" exported="" name="tomcat-jasper-el-7.0.42" level="project" />
+    <orderEntry type="library" exported="" name="tomcat-jasper-7.0.42" level="project" />
+    <orderEntry type="library" exported="" name="tomcat-juli-7.0.42" level="project" />
+    <orderEntry type="library" exported="" name="tomcat-util-7.0.42" level="project" />
+    <orderEntry type="library" exported="" name="tomcat-jsp-api-7.0.42" level="project" />
+    <orderEntry type="library" exported="" name="tomcat-embed-jasper-7.0.42" level="project" />
+    <orderEntry type="library" exported="" name="tomcat-api-7.0.42" level="project" />
+    <orderEntry type="library" exported="" name="ecj-4.2.2" level="project" />
   </component>
 </module>
 
