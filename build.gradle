@@ -1,5 +1,6 @@
 apply plugin: 'groovy'
 apply plugin: 'project-report'
+apply plugin: 'application'
 
 ext {
     tomcatVersion = '7.0.42'
@@ -11,10 +12,15 @@ ext {
     spockVersion = '0.7-groovy-2.0'
 }
 
-defaultTasks 'clean', 'projectReport', 'build'
+defaultTasks 'clean', 'projectReport', 'build', 'installApp', 'distZip', 'distTar'
 
 repositories {
     mavenCentral()
+}
+
+mainClassName = "org.kurron.tomcat.Launcher"
+applicationDistribution.from('rest-services-1.0.0-SNAPSHOT.war') {
+    into '/'
 }
 
 configurations.all {
