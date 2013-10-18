@@ -1,5 +1,4 @@
 apply plugin: 'groovy'
-apply plugin: 'project-report'
 
 ext {
     tomcatVersion = '7.0.42'
@@ -11,19 +10,9 @@ ext {
     spockVersion = '0.7-groovy-2.0'
 }
 
-defaultTasks 'clean', 'projectReport', 'build'
-
 repositories {
     mavenCentral()
 }
-
-configurations.all {
-    exclude group: 'commons-logging'
-    exclude group: 'log4j'
-    exclude module: 'junit-dep'
-    exclude module: 'hamcrest-core'
-}
-
 dependencies {
     compile "org.codehaus.groovy:groovy-all:${groovyVersion}"
     compile "org.slf4j:slf4j-api:${slf4jVersion}"
@@ -41,20 +30,11 @@ dependencies {
 
     runtime "org.slf4j:jul-to-slf4j:${slf4jVersion}"
     runtime "org.slf4j:log4j-over-slf4j:${slf4jVersion}"
-
-    testCompile "org.spockframework:spock-core:${spockVersion}"
 }
 
-task wrapper(type: Wrapper) {
-    gradleVersion = '1.8'
-}
-
-apply plugin: GreetingPlugin
-
-class GreetingPlugin implements Plugin<Project> {
-    void apply(Project project) {
-        project.task('hello') << {
-            println "Hello from the GreetingPlugin"
-        }
-    }
+configurations.all {
+    exclude group: 'commons-logging'
+    exclude group: 'log4j'
+    exclude module: 'junit-dep'
+    exclude module: 'hamcrest-core'
 }
