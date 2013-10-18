@@ -20,6 +20,8 @@ apply plugin: GreetingPlugin
 tomcat {
     message = 'Hi'
     greeter = 'Gradle'
+
+    warFile = new File('rest-services-1.0.0-SNAPSHOT.war')
 }
 
 class GreetingPlugin implements Plugin<Project> {
@@ -28,17 +30,16 @@ class GreetingPlugin implements Plugin<Project> {
         project.task('hello') << {
             println "${project.tomcat.message} from ${project.tomcat.greeter}"
             TomcatServer server = new Tomcat7xServer()
-            String path = new File( 'rest-services-1.0.0-SNAPSHOT.war' ).canonicalPath
-            println( "path = ${path}")
-            server.createContext( '/rest-services', path )
+            String path = project.tomcat.warFile.canonicalPath
+            println("path = ${path}")
+            server.createContext('/rest-services', path)
             server.createLoader(Thread.currentThread().contextClassLoader)
             server.start()
-            boolean daemon = false
 
-            Thread shutdownMonitor = new ShutdownMonitor( 8081, 'stop-key', server, daemon)
+            Thread shutdownMonitor = new ShutdownMonitor( project.tomcat.stopPort,  project.tomcat.stopKey, server,  project.tomcat.daemon )
             shutdownMonitor.start()
 
-            if(!daemon) {
+            if (!project.tomcat.daemon) {
                 shutdownMonitor.join()
             }
         }
@@ -48,4 +49,9 @@ class GreetingPlugin implements Plugin<Project> {
 class TomcatPluginExtension {
     String message
     String greeter
+
+    int stopPort = 8081
+    String stopKey = 'stop-key'
+    boolean daemon = false
+    File warFile
 }
