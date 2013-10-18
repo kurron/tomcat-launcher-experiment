@@ -13,5 +13,6 @@ public interface TomcatServer {
     void setConfigFile(URL configFile)
     void start()
     void stop()
+    void setPort( int port )
     boolean isStopped()
 }

@@ -21,6 +21,7 @@ tomcat {
     message = 'Hi'
     greeter = 'Gradle'
 
+    port = 9090
     warFile = new File('rest-services-1.0.0-SNAPSHOT.war')
 }
 
@@ -30,6 +31,7 @@ class GreetingPlugin implements Plugin<Project> {
         project.task('hello') << {
             println "${project.tomcat.message} from ${project.tomcat.greeter}"
             TomcatServer server = new Tomcat7xServer()
+            server.port = project.tomcat.port
             String path = project.tomcat.warFile.canonicalPath
             println("path = ${path}")
             server.createContext('/rest-services', path)
@@ -50,6 +52,7 @@ class TomcatPluginExtension {
     String message
     String greeter
 
+    int port = 8080
     int stopPort = 8081
     String stopKey = 'stop-key'
     boolean daemon = false

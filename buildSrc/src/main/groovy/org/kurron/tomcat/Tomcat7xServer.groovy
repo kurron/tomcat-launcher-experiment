@@ -9,9 +9,15 @@ class Tomcat7xServer implements TomcatServer {
     final Tomcat tomcat
     def context
     private boolean stopped
+    int port = 8080
 
     public Tomcat7xServer() {
         this.tomcat = new Tomcat()
+    }
+
+    @Override
+    void setPort( int port ) {
+        this.port = port
     }
 
     @Override
@@ -57,6 +63,7 @@ class Tomcat7xServer implements TomcatServer {
     @Override
     void start() {
         stopped = false
+        tomcat.port = port
         tomcat.start()
     }
 
