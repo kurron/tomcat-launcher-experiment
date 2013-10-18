@@ -51,10 +51,19 @@ task wrapper(type: Wrapper) {
 
 apply plugin: GreetingPlugin
 
+greeting.message = 'Hi from Gradle'
+
 class GreetingPlugin implements Plugin<Project> {
     void apply(Project project) {
+        // Add the 'greeting' extension object
+        project.extensions.create("greeting", GreetingPluginExtension)
+        // Add a task that uses the configuration
         project.task('hello') << {
-            println "Hello from the GreetingPlugin"
+            println project.greeting.message
         }
     }
+}
+
+class GreetingPluginExtension {
+    def String message = 'Hello from GreetingPlugin'
 }
