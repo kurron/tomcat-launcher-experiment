@@ -17,20 +17,24 @@ task wrapper(type: Wrapper) {
 
 apply plugin: GreetingPlugin
 
-tomcat {
-    message = 'Hi'
-    greeter = 'Gradle'
+task ronbo( dependsOn: startTomcat ) << {
+    println 'Running tests....'
+    Thread.sleep( 1000 * 30 )
+    finalizedBy = stopTomcat
+}
 
+tomcat {
     port = 8080
     context = '/rest-services'
     warFile = new File('rest-services-1.0.0-SNAPSHOT.war')
+    daemon = true
 }
 
 class GreetingPlugin implements Plugin<Project> {
     void apply(Project project) {
         project.extensions.create("tomcat", TomcatPluginExtension)
-        project.task('hello') << {
-            println "${project.tomcat.message} from ${project.tomcat.greeter}"
+        project.task('startTomcat') << {
+            println "Starting Tomcat on port${project.tomcat.port} and context ${project.tomcat.context}"
             TomcatServer server = new Tomcat7xServer()
             server.port = project.tomcat.port
             String path = project.tomcat.warFile.canonicalPath
@@ -46,13 +50,20 @@ class GreetingPlugin implements Plugin<Project> {
                 shutdownMonitor.join()
             }
         }
+        project.task('stopTomcat') << {
+            println "Stopping Tomcat on port${project.tomcat.stopPort} and key ${project.tomcat.stopKey}"
+            Socket s = new Socket(InetAddress.getByName('127.0.0.1'), project.tomcat.stopPort)
+            s.setSoLinger(false, 0)
+
+            OutputStream out = s.outputStream
+            out.write((project.tomcat.stopKey + '\r\nstop\r\n').bytes)
+            out.flush()
+            s.close()
+        }
     }
 }
 
 class TomcatPluginExtension {
-    String message
-    String greeter
-
     int port = 8080
     int stopPort = 8081
     String stopKey = 'stop-key'
