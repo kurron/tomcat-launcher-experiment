@@ -1,48 +1,14 @@
+import org.kurron.tomcat.ShutdownMonitor
+import org.kurron.tomcat.Tomcat7xServer
+import org.kurron.tomcat.TomcatServer
+
 apply plugin: 'groovy'
 apply plugin: 'project-report'
-
-ext {
-    tomcatVersion = '7.0.42'
-    groovyVersion = '2.1.7'
-    hamcrestVersion = '1.3'
-    junitVersion = '4.11'
-    logbackVersion = '1.0.13'
-    slf4jVersion = '1.7.5'
-    spockVersion = '0.7-groovy-2.0'
-}
 
 defaultTasks 'clean', 'projectReport', 'build'
 
 repositories {
     mavenCentral()
-}
-
-configurations.all {
-    exclude group: 'commons-logging'
-    exclude group: 'log4j'
-    exclude module: 'junit-dep'
-    exclude module: 'hamcrest-core'
-}
-
-dependencies {
-    compile "org.codehaus.groovy:groovy-all:${groovyVersion}"
-    compile "org.slf4j:slf4j-api:${slf4jVersion}"
-    compile "org.slf4j:slf4j-ext:${slf4jVersion}"
-    compile "org.slf4j:jcl-over-slf4j:${slf4jVersion}"
-    compile "ch.qos.logback:logback-core:${logbackVersion}"
-    compile "ch.qos.logback:logback-classic:${logbackVersion}"
-
-    compile "org.apache.tomcat.embed:tomcat-embed-core:${tomcatVersion}"
-    compile "org.apache.tomcat.embed:tomcat-embed-logging-juli:${tomcatVersion}"
-    compile "org.apache.tomcat.embed:tomcat-embed-jasper:${tomcatVersion}"
-    compile "org.apache.tomcat:tomcat-jasper:${tomcatVersion}"
-    compile "org.apache.tomcat:tomcat-jasper-el:${tomcatVersion}"
-    compile "org.apache.tomcat:tomcat-jsp-api:${tomcatVersion}"
-
-    runtime "org.slf4j:jul-to-slf4j:${slf4jVersion}"
-    runtime "org.slf4j:log4j-over-slf4j:${slf4jVersion}"
-
-    testCompile "org.spockframework:spock-core:${spockVersion}"
 }
 
 task wrapper(type: Wrapper) {
@@ -61,6 +27,20 @@ class GreetingPlugin implements Plugin<Project> {
         project.extensions.create("tomcat", TomcatPluginExtension)
         project.task('hello') << {
             println "${project.tomcat.message} from ${project.tomcat.greeter}"
+            TomcatServer server = new Tomcat7xServer()
+            String path = new File( 'rest-services-1.0.0-SNAPSHOT.war' ).canonicalPath
+            println( "path = ${path}")
+            server.createContext( '/rest-services', path )
+            server.createLoader(Thread.currentThread().contextClassLoader)
+            server.start()
+            boolean daemon = false
+
+            Thread shutdownMonitor = new ShutdownMonitor( 8081, 'stop-key', server, daemon)
+            shutdownMonitor.start()
+
+            if(!daemon) {
+                shutdownMonitor.join()
+            }
         }
     }
 }

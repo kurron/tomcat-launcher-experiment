@@ -15,6 +15,12 @@ class Tomcat7xServer implements TomcatServer {
     }
 
     @Override
+    void createLoader(ClassLoader classLoader) {
+        Class webappLoader = classLoader.loadClass('org.apache.catalina.loader.WebappLoader')
+        context.loader = webappLoader.newInstance(classLoader)
+    }
+
+    @Override
     TomcatVersion getVersion() {
         TomcatVersion.VERSION_7X
     }

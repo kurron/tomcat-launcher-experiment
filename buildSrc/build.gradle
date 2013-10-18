@@ -1,6 +1,7 @@
 apply plugin: 'groovy'
 
 ext {
+    servletApiVersion = '3.1.0'
     tomcatVersion = '7.0.42'
     groovyVersion = '2.1.7'
     hamcrestVersion = '1.3'
@@ -28,6 +29,7 @@ dependencies {
     compile "org.apache.tomcat:tomcat-jasper-el:${tomcatVersion}"
     compile "org.apache.tomcat:tomcat-jsp-api:${tomcatVersion}"
 
+    runtime "javax.servlet:javax.servlet-api:${servletApiVersion}"
     runtime "org.slf4j:jul-to-slf4j:${slf4jVersion}"
     runtime "org.slf4j:log4j-over-slf4j:${slf4jVersion}"
 }
