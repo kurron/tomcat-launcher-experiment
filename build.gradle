@@ -15,7 +15,7 @@ task wrapper(type: Wrapper) {
     gradleVersion = '1.8'
 }
 
-apply plugin: GreetingPlugin
+apply plugin: TomcatPlugin
 
 task ronbo( dependsOn: startTomcat ) << {
     println 'Running tests....'
@@ -30,15 +30,15 @@ tomcat {
     daemon = true
 }
 
-class GreetingPlugin implements Plugin<Project> {
+class TomcatPlugin implements Plugin<Project> {
     void apply(Project project) {
         project.extensions.create("tomcat", TomcatPluginExtension)
         project.task('startTomcat') << {
-            println "Starting Tomcat on port ${project.tomcat.port} and context ${project.tomcat.context}"
+            logger.quiet "Starting Tomcat on port ${project.tomcat.port} and context ${project.tomcat.context}"
             TomcatServer server = new Tomcat7xServer()
             server.port = project.tomcat.port
             String path = project.tomcat.warFile.canonicalPath
-            println("path = ${path}")
+            logger.quiet "path = ${path}"
             server.createContext(project.tomcat.context, path)
             server.createLoader(Thread.currentThread().contextClassLoader)
             server.start()
@@ -51,7 +51,7 @@ class GreetingPlugin implements Plugin<Project> {
             }
         }
         project.task('stopTomcat') << {
-            println "Stopping Tomcat on port ${project.tomcat.stopPort} and key ${project.tomcat.stopKey}"
+            logger.quiet "Stopping Tomcat on port ${project.tomcat.stopPort} and key ${project.tomcat.stopKey}"
             Socket s = new Socket(InetAddress.getByName('127.0.0.1'), project.tomcat.stopPort)
             s.setSoLinger(false, 0)
 
