@@ -19,7 +19,7 @@ apply plugin: TomcatPlugin
 
 task ronbo( dependsOn: startTomcat ) << {
     println 'Running tests....'
-    Thread.sleep( 1000 * 30 )
+    new URL( 'http://localhost:8080/rest-services/resources/ping' ).text
 }
 ronbo.finalizedBy = ['stopTomcat']
 
@@ -34,11 +34,11 @@ class TomcatPlugin implements Plugin<Project> {
     void apply(Project project) {
         project.extensions.create("tomcat", TomcatPluginExtension)
         project.task('startTomcat') << {
-            logger.quiet "Starting Tomcat on port ${project.tomcat.port} and context ${project.tomcat.context}"
+            logger.quiet "Starting Tomcat at http://localhost:${project.tomcat.port}${project.tomcat.context}"
             TomcatServer server = new Tomcat7xServer()
             server.port = project.tomcat.port
             String path = project.tomcat.warFile.canonicalPath
-            logger.quiet "path = ${path}"
+            logger.quiet "Installing WAR file located at ${path}"
             server.createContext(project.tomcat.context, path)
             server.createLoader(Thread.currentThread().contextClassLoader)
             server.start()
@@ -47,6 +47,7 @@ class TomcatPlugin implements Plugin<Project> {
             shutdownMonitor.start()
 
             if (!project.tomcat.daemon) {
+                logger.quiet 'Daemon mode is false.  Tomcat process will now block.'
                 shutdownMonitor.join()
             }
         }
