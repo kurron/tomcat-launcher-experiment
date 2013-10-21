@@ -27,37 +27,10 @@ class Tomcat7xServer implements TomcatServer {
     }
 
     @Override
-    TomcatVersion getVersion() {
-        TomcatVersion.VERSION_7X
-    }
-
-    @Override
-    def getEmbedded() {
-        tomcat
-    }
-
-    @Override
-    void setHome(String home) {
-        tomcat.baseDir = home
-    }
-
-    @Override
-    def getContext() {
-        context
-    }
-
-    @Override
     void createContext(String fullContextPath, String webAppPath) {
         def context = tomcat.addWebapp(null, fullContextPath, webAppPath)
         context.unpackWAR = false
         this.context = context
-    }
-
-    @Override
-    void setConfigFile(URL configFile) {
-        if(configFile) {
-            context.configFile = configFile
-        }
     }
 
     @Override
