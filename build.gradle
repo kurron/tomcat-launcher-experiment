@@ -5,7 +5,7 @@ import org.kurron.tomcat.TomcatServer
 apply plugin: 'groovy'
 apply plugin: 'project-report'
 
-defaultTasks 'clean', 'projectReport', 'build'
+defaultTasks 'clean', 'projectReport', 'build', 'ronbo'
 
 repositories {
     mavenCentral()
@@ -20,8 +20,8 @@ apply plugin: GreetingPlugin
 task ronbo( dependsOn: startTomcat ) << {
     println 'Running tests....'
     Thread.sleep( 1000 * 30 )
-    finalizedBy = stopTomcat
 }
+ronbo.finalizedBy = ['stopTomcat']
 
 tomcat {
     port = 8080
@@ -34,7 +34,7 @@ class GreetingPlugin implements Plugin<Project> {
     void apply(Project project) {
         project.extensions.create("tomcat", TomcatPluginExtension)
         project.task('startTomcat') << {
-            println "Starting Tomcat on port${project.tomcat.port} and context ${project.tomcat.context}"
+            println "Starting Tomcat on port ${project.tomcat.port} and context ${project.tomcat.context}"
             TomcatServer server = new Tomcat7xServer()
             server.port = project.tomcat.port
             String path = project.tomcat.warFile.canonicalPath
@@ -51,7 +51,7 @@ class GreetingPlugin implements Plugin<Project> {
             }
         }
         project.task('stopTomcat') << {
-            println "Stopping Tomcat on port${project.tomcat.stopPort} and key ${project.tomcat.stopKey}"
+            println "Stopping Tomcat on port ${project.tomcat.stopPort} and key ${project.tomcat.stopKey}"
             Socket s = new Socket(InetAddress.getByName('127.0.0.1'), project.tomcat.stopPort)
             s.setSoLinger(false, 0)
 
